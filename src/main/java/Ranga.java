@@ -51,7 +51,7 @@ public class Ranga {
                         Task t = tasks[i];
                         System.out.println(
                                 " " + (i + 1) + ".[" + t.getStatusIcon() + "] "
-                                + t.getDescription()
+                                        + t.getDescription()
                         );
                     }
                 }
