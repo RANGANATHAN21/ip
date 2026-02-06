@@ -4,9 +4,7 @@
  */
 public class Task {
 
-    // The description text of the task
     private final String description;
-    // Whether the task has been completed
     private boolean isDone;
 
     /**
@@ -20,35 +18,18 @@ public class Task {
         this.isDone = false;
     }
 
-    /**
-     * Marks this task as completed.
-     */
     public void markAsDone() {
         isDone = true;
     }
 
-    /**
-     * Marks this task as not completed.
-     */
     public void markAsNotDone() {
         isDone = false;
     }
 
-    /**
-     * Returns the status icon for this task.
-     *
-     * @return "X" if done, " " (space) if not done
-     */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
     }
 
-    /**
-     * Returns a string representation of the task including type icon and status.
-     * Subclasses should override to add type-specific information.
-     *
-     * @return String representation of the task
-     */
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
