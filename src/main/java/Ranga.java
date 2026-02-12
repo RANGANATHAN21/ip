@@ -63,7 +63,7 @@ public class Ranga {
         System.out.println(" Welcome to Vought™ Interactive Systems");
         System.out.println(" I'm Ranga, your favourite VoughtBot! Definitely not a supe. Trust me.");
         System.out.println(logo);
-        System.out.println(" We record everything you say for quality assurance purposes. Type 'list' to see the stored Herogasm Files, or 'bye' to GTFO.");
+        System.out.println(" We record everything you say for quality assurance purposes. Type 'list' to see the stored Herogasm Files, or 'bye' to go off-grid.");
     }
 
     /**
@@ -116,7 +116,7 @@ public class Ranga {
         if (taskCount == 0) {
             System.out.println(" Nothing stored. Even The Deep has more going on.");
         } else {
-            System.out.println(" Here are the tasks in your list:");
+            System.out.println(" We ain’t runnin’ a charity. Get to it.");
             for (int i = 0; i < taskCount; i++) {
                 System.out.println(" " + (i + 1) + "." + tasks[i]);
             }
@@ -142,7 +142,7 @@ public class Ranga {
         } else if (userInput.startsWith("event ")) {
             handleEventCommand(userInput);
         } else {
-            System.out.println(" I don't know what that means :-(");
+            System.out.println(" Oi! Get yourself together, son.");
         }
     }
 
@@ -180,13 +180,13 @@ public class Ranga {
      * @param newTask The task to add
      */
     private static void addTask(Task newTask) {
-        if (taskCount < MAX_TASKS) {
+        if (taskCount <= MAX_TASKS) {
             tasks[taskCount] = newTask;
             taskCount++;
             System.out.println(SEPARATOR);
-            System.out.println(" Got it. I've added this task:");
+            System.out.println(" Right then. Added to the hit list:");
             System.out.println("   " + newTask);
-            System.out.println(" Now you have " + taskCount + " tasks in the list.");
+            System.out.println(" Now you have " + taskCount + " tasks in the list. Have fun!");
             System.out.println(SEPARATOR);
         } else {
             System.out.println(" Memory full. This is why we can't have nice things.");
@@ -203,7 +203,7 @@ public class Ranga {
         String description = userInput.substring(TODO_COMMAND_OFFSET).trim();
 
         if (description.isEmpty()) {
-            System.out.println(" The description of a todo cannot be empty.");
+            System.out.println(" Blank tasks are how people explode.");
             return;
         }
 
@@ -221,7 +221,7 @@ public class Ranga {
         int byIndex = details.indexOf("/by");
 
         if (byIndex == -1) {
-            System.out.println(" Please specify the deadline using /by.");
+            printMissingKeyword();
             return;
         }
 
@@ -229,7 +229,7 @@ public class Ranga {
         String by = details.substring(byIndex + BY_TAG_LENGTH).trim();
 
         if (description.isEmpty() || by.isEmpty()) {
-            System.out.println(" The description and deadline cannot be empty.");
+            System.out.println(" Oi. Description and deadline. Both. Try again.");
             return;
         }
 
@@ -248,7 +248,7 @@ public class Ranga {
         int toIndex = details.indexOf("/to");
 
         if (fromIndex == -1 || toIndex == -1) {
-            System.out.println(" Please specify the event time using /from and /to.");
+            printMissingKeyword();
             return;
         }
 
@@ -257,11 +257,15 @@ public class Ranga {
         String to = details.substring(toIndex + TO_TAG_LENGTH).trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            System.out.println(" The description, start time, and end time cannot be empty.");
+            System.out.println(" Oi. Description and times. Both. Try again.");
             return;
         }
 
         addTask(new Event(description, from, to));
+    }
+
+    private static void printMissingKeyword() {
+        System.out.println(" Are you forgetting something?");
     }
 
     /**
