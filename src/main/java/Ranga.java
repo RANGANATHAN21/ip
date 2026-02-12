@@ -7,63 +7,43 @@ import java.util.Scanner;
  */
 public class Ranga {
 
-    private static final int MAX_TASKS = 100;
-    private static final int MARK_COMMAND_OFFSET = 5;
-    private static final int UNMARK_COMMAND_OFFSET = 7;
-    private static final int TODO_COMMAND_OFFSET = 5;
-    private static final int DEADLINE_COMMAND_OFFSET = 9;
-    private static final int EVENT_COMMAND_OFFSET = 6;
-    private static final int BY_TAG_LENGTH = 3;
-    private static final int FROM_TAG_LENGTH = 5;
-    private static final int TO_TAG_LENGTH = 3;
-    private static final String SEPARATOR = "____________________________________________________________";
+    private final UI ui;
+    private final TaskList tasks;
 
-    private static final Task[] tasks = new Task[MAX_TASKS];
-    private static int taskCount = 0;
+    /**
+     * Creates a new Ranga chatbot instance.
+     */
+    public Ranga() {
+        this.ui = new UI();
+        this.tasks = new TaskList();
+    }
 
     public static void main(String[] args) {
-        run();
+        new Ranga().run();
     }
 
     /**
      * Main program execution loop.
      * Handles user interaction until exit.
      */
-    private static void run() {
+    public void run() {
         Scanner scanner = new Scanner(System.in);
 
-        printGreeting();
+        ui.showWelcome();
 
         boolean running = true;
         while (running) {
-            System.out.print("> ");
-            String userInput = scanner.nextLine().trim();
-
-            running = processCommand(userInput);
+            try {
+                System.out.print("> ");
+                String userInput = scanner.nextLine().trim();
+                running = processCommand(userInput);
+            } catch (RangaException e) {
+                ui.showError(e.getMessage());
+            }
         }
 
-        System.out.println(SEPARATOR);
+        ui.showLine();
         scanner.close();
-    }
-
-    /**
-     * Prints the welcome greeting and ASCII logo.
-     */
-    private static void printGreeting() {
-        String logo =
-                """
-                         ____
-                        |  _ \\  __ _ _ __   __ _  __ _
-                        | |_) / _` | '_ \\ / _` |/ _` |
-                        |  _ < (_| | | | | (_| | (_| |
-                        |_| \\_\\__,_|_| |_|\\__, |\\__,_|
-                                           |___/
-                        """;
-
-        System.out.println(" Welcome to Vought™ Interactive Systems");
-        System.out.println(" I'm Ranga, your favourite VoughtBot! Definitely not a supe. Trust me.");
-        System.out.println(logo);
-        System.out.println(" We record everything you say for quality assurance purposes. Type 'list' to see the stored Herogasm Files, or 'bye' to go off-grid.");
     }
 
     /**
@@ -71,67 +51,17 @@ public class Ranga {
      *
      * @param userInput The command string entered by the user
      * @return false if user wants to exit (bye command), true otherwise
+     * @throws RangaException if there is an error processing the command
      */
-    private static boolean processCommand(String userInput) {
-        switch (userInput) {
-        case "bye":
-            handleByeCommand();
+    private boolean processCommand(String userInput) throws RangaException {
+        if (userInput.equals("bye")) {
+            ui.showGoodbye();
             return false;
-
-        case "":
-            handleEmptyCommand();
-            break;
-
-        case "list":
+        } else if (userInput.isEmpty()) {
+            ui.showEmptyInputMessage();
+        } else if (userInput.equals("list")) {
             handleListCommand();
-            break;
-
-        default:
-            handleDefaultCommand(userInput);
-            break;
-        }
-        return true;
-    }
-
-    /**
-     * Handles the "bye" command by printing a farewell message.
-     */
-    private static void handleByeCommand() {
-        System.out.println(
-                " Thank you for your commitment to keeping supes safe. Try not to cause an international incident!");
-    }
-
-    /**
-     * Handles empty input by prompting the user to enter something.
-     */
-    private static void handleEmptyCommand() {
-        System.out.println(" Say something or I'll ping Homelander.");
-    }
-
-    /**
-     * Handles the "list" command by displaying all stored tasks.
-     */
-    private static void handleListCommand() {
-        System.out.println(SEPARATOR);
-        if (taskCount == 0) {
-            System.out.println(" Nothing stored. Even The Deep has more going on.");
-        } else {
-            System.out.println(" We ain’t runnin’ a charity. Get to it.");
-            for (int i = 0; i < taskCount; i++) {
-                System.out.println(" " + (i + 1) + "." + tasks[i]);
-            }
-        }
-        System.out.println(SEPARATOR);
-    }
-
-    /**
-     * Handles commands that don't match predefined cases.
-     * Processes mark, unmark, todo, deadline, event commands.
-     *
-     * @param userInput The command string to process
-     */
-    private static void handleDefaultCommand(String userInput) {
-        if (userInput.startsWith("mark ")) {
+        } else if (userInput.startsWith("mark ")) {
             handleMarkCommand(userInput);
         } else if (userInput.startsWith("unmark ")) {
             handleUnmarkCommand(userInput);
@@ -142,155 +72,75 @@ public class Ranga {
         } else if (userInput.startsWith("event ")) {
             handleEventCommand(userInput);
         } else {
-            System.out.println(" Oi! Get yourself together, son.");
+            throw new RangaException("Oi! Get yourself together, son.");
         }
+        return true;
+    }
+
+    /**
+     * Handles the "list" command by displaying all stored tasks.
+     */
+    private void handleListCommand() {
+        ui.showTaskList(tasks.getTasks(), tasks.getTaskCount());
     }
 
     /**
      * Handles the "mark" command to mark a task as done.
      *
      * @param userInput The full mark command string
+     * @throws RangaException if task index is invalid
      */
-    private static void handleMarkCommand(String userInput) {
-        int index = parseIndex(userInput, MARK_COMMAND_OFFSET, taskCount);
-        if (index != -1) {
-            tasks[index].markAsDone();
-            System.out.println(" Nice! Homelander would be proud.");
-            System.out.println("   " + tasks[index]);
-        }
+    private void handleMarkCommand(String userInput) throws RangaException {
+        int index = Parser.parseTaskIndex(userInput, Parser.getMarkCommandOffset(), tasks.getTaskCount());
+        tasks.markTask(index);
+        ui.showTaskMarked(tasks.getTask(index));
     }
 
     /**
      * Handles the "unmark" command to mark a task as not done.
      *
      * @param userInput The full unmark command string
+     * @throws RangaException if task index is invalid
      */
-    private static void handleUnmarkCommand(String userInput) {
-        int index = parseIndex(userInput, UNMARK_COMMAND_OFFSET, taskCount);
-        if (index != -1) {
-            tasks[index].markAsNotDone();
-            System.out.println(" One more mistake and you'll be sent to Ashley for performance review.");
-            System.out.println("   " + tasks[index]);
-        }
-    }
-
-    /**
-     * Adds a task to the task list and displays confirmation message.
-     *
-     * @param newTask The task to add
-     */
-    private static void addTask(Task newTask) {
-        if (taskCount <= MAX_TASKS) {
-            tasks[taskCount] = newTask;
-            taskCount++;
-            System.out.println(SEPARATOR);
-            System.out.println(" Right then. Added to the hit list:");
-            System.out.println("   " + newTask);
-            System.out.println(" Now you have " + taskCount + " tasks in the list. Have fun!");
-            System.out.println(SEPARATOR);
-        } else {
-            System.out.println(" Memory full. This is why we can't have nice things.");
-        }
+    private void handleUnmarkCommand(String userInput) throws RangaException {
+        int index = Parser.parseTaskIndex(userInput, Parser.getUnmarkCommandOffset(), tasks.getTaskCount());
+        tasks.unmarkTask(index);
+        ui.showTaskUnmarked(tasks.getTask(index));
     }
 
     /**
      * Handles the "todo" command to add a new todo task.
-     * Expected format: todo DESCRIPTION
      *
      * @param userInput The full todo command string
+     * @throws RangaException if description is empty
      */
-    private static void handleTodoCommand(String userInput) {
-        String description = userInput.substring(TODO_COMMAND_OFFSET).trim();
-
-        if (description.isEmpty()) {
-            System.out.println(" Blank tasks are how people explode.");
-            return;
-        }
-
-        addTask(new Todo(description));
+    private void handleTodoCommand(String userInput) throws RangaException {
+        Task task = Parser.parseTodo(userInput);
+        tasks.addTask(task);
+        ui.showTaskAdded(task, tasks.getTaskCount());
     }
 
     /**
      * Handles the "deadline" command to add a new deadline task.
-     * Expected format: deadline DESCRIPTION /by DEADLINE
      *
      * @param userInput The full deadline command string
+     * @throws RangaException if format is invalid or fields are empty
      */
-    private static void handleDeadlineCommand(String userInput) {
-        String details = userInput.substring(DEADLINE_COMMAND_OFFSET).trim();
-        int byIndex = details.indexOf("/by");
-
-        if (byIndex == -1) {
-            printMissingKeyword();
-            return;
-        }
-
-        String description = details.substring(0, byIndex).trim();
-        String by = details.substring(byIndex + BY_TAG_LENGTH).trim();
-
-        if (description.isEmpty() || by.isEmpty()) {
-            System.out.println(" Oi. Description and deadline. Both. Try again.");
-            return;
-        }
-
-        addTask(new Deadline(description, by));
+    private void handleDeadlineCommand(String userInput) throws RangaException {
+        Task task = Parser.parseDeadline(userInput);
+        tasks.addTask(task);
+        ui.showTaskAdded(task, tasks.getTaskCount());
     }
 
     /**
      * Handles the "event" command to add a new event task.
-     * Expected format: event DESCRIPTION /from START /to END
      *
      * @param userInput The full event command string
+     * @throws RangaException if format is invalid or fields are empty
      */
-    private static void handleEventCommand(String userInput) {
-        String details = userInput.substring(EVENT_COMMAND_OFFSET).trim();
-        int fromIndex = details.indexOf("/from");
-        int toIndex = details.indexOf("/to");
-
-        if (fromIndex == -1 || toIndex == -1) {
-            printMissingKeyword();
-            return;
-        }
-
-        String description = details.substring(0, fromIndex).trim();
-        String from = details.substring(fromIndex + FROM_TAG_LENGTH, toIndex).trim();
-        String to = details.substring(toIndex + TO_TAG_LENGTH).trim();
-
-        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            System.out.println(" Oi. Description and times. Both. Try again.");
-            return;
-        }
-
-        addTask(new Event(description, from, to));
-    }
-
-    private static void printMissingKeyword() {
-        System.out.println(" Are you forgetting something?");
-    }
-
-    /**
-     * Parses the task index from a command string.
-     *
-     * @param userInput    The full command string
-     * @param offset       The starting position of the index in the command
-     * @param maxTaskCount The total number of tasks (for validation)
-     * @return The parsed index (0-based), or -1 if parsing failed or index is invalid
-     */
-    private static int parseIndex(String userInput, int offset, int maxTaskCount) {
-        int index;
-
-        try {
-            index = Integer.parseInt(userInput.substring(offset).trim()) - 1;
-        } catch (NumberFormatException e) {
-            System.out.println(" Black Noir doesn't have time to teach numbers. Last chance.");
-            return -1;
-        }
-
-        if (index < 0 || index >= maxTaskCount) {
-            System.out.println(" Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
-            return -1;
-        }
-
-        return index;
+    private void handleEventCommand(String userInput) throws RangaException {
+        Task task = Parser.parseEvent(userInput);
+        tasks.addTask(task);
+        ui.showTaskAdded(task, tasks.getTaskCount());
     }
 }
