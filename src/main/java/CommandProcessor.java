@@ -60,7 +60,7 @@ public class CommandProcessor {
             ui.showTaskAdded(task, tasks.getTaskCount());
 
         } else {
-            throw new RangaException("Oi! Get yourself together son!");
+            throw new RangaException("Oi!! Get yourself together son!");
         }
 
         return true;
