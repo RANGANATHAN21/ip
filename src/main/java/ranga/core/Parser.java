@@ -15,6 +15,7 @@ public class Parser {
     private static final int TODO_COMMAND_OFFSET = 5;
     private static final int DEADLINE_COMMAND_OFFSET = 9;
     private static final int EVENT_COMMAND_OFFSET = 6;
+    private static final int DELETE_COMMAND_OFFSET = 7;
     private static final int MARK_COMMAND_OFFSET = 5;
     private static final int UNMARK_COMMAND_OFFSET = 7;
     private static final int BY_TAG_LENGTH = 3;
@@ -152,5 +153,14 @@ public class Parser {
      */
     public static int getUnmarkCommandOffset() {
         return UNMARK_COMMAND_OFFSET;
+    }
+
+    /**
+     * Gets the delete command offset.
+     *
+     * @return The delete command offset
+     */
+    public static int getDeleteCommandOffset() {
+        return DELETE_COMMAND_OFFSET;
     }
 }
