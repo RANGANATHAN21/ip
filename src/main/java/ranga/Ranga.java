@@ -1,4 +1,11 @@
+package ranga;
+
 import java.util.Scanner;
+
+import ranga.core.CommandProcessor;
+import ranga.core.TaskList;
+import ranga.exception.RangaException;
+import ranga.ui.UI;
 
 /**
  * Ranga is a task management chatbot with a Vought™ theme.

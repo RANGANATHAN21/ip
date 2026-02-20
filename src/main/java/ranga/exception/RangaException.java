@@ -1,3 +1,5 @@
+package ranga.exception;
+
 /**
  * Represents exceptions specific to Ranga chatbot.
  * Used to signal errors in user input or command processing.

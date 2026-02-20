@@ -1,3 +1,9 @@
+package ranga.core;
+
+import ranga.exception.RangaException;
+import ranga.task.Task;
+import ranga.ui.UI;
+
 /**
  * Handles processing of user commands.
  * Extracted from Ranga to reduce class length.

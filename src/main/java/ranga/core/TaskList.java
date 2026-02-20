@@ -1,3 +1,8 @@
+package ranga.core;
+
+import ranga.exception.RangaException;
+import ranga.task.Task;
+
 /**
  * Manages the list of tasks for the Ranga application.
  * Handles adding, retrieving, and querying tasks.

@@ -1,3 +1,5 @@
+package ranga.task;
+
 /**
  * Base class representing a task with a description and completion status.
  * Subclasses should implement specific task types (Todo, Deadline, Event).

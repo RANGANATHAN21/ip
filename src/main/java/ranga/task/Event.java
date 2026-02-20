@@ -1,3 +1,5 @@
+package ranga.task;
+
 /**
  * Represents a task that starts at a specific date/time and ends at another date/time.
  */

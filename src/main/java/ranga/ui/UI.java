@@ -1,3 +1,7 @@
+package ranga.ui;
+
+import ranga.task.Task;
+
 /**
  * Handles all user interface interactions for the Ranga application.
  * Responsible for displaying messages, errors, and reading user input.

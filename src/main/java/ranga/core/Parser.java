@@ -1,3 +1,11 @@
+package ranga.core;
+
+import ranga.task.Deadline;
+import ranga.task.Event;
+import ranga.exception.RangaException;
+import ranga.task.Task;
+import ranga.task.Todo;
+
 /**
  * Parses user input and extracts command information.
  * Validates input format and throws appropriate exceptions for invalid input.
