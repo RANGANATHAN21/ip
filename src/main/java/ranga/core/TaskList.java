@@ -11,12 +11,14 @@ import java.util.ArrayList;
 public class TaskList {
 
     private final ArrayList<Task> tasks;
+    private final Storage storage;
 
     /**
      * Creates a new empty TaskList.
      */
-    public TaskList() {
-        this.tasks = new ArrayList<>();
+    public TaskList(Storage storage) {
+        this.tasks = storage.load();
+        this.storage = storage;
     }
 
     /**
@@ -26,6 +28,7 @@ public class TaskList {
      */
     public void addTask(Task task) {
         tasks.add(task);
+        storage.save(tasks);
     }
 
     /**
@@ -46,14 +49,16 @@ public class TaskList {
      * Deletes a task at the specified index.
      *
      * @param index The index of the task (0-based)
-     * @return The task at the specified index
+     * @return The deleted task
      * @throws RangaException if index is out of bounds
      */
     public Task deleteTask(int index) throws RangaException {
         if (index < 0 || index >= tasks.size()) {
             throw new RangaException("Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
         }
-        return tasks.remove(index);
+        Task removed = tasks.remove(index);
+        storage.save(tasks);
+        return removed;
     }
 
     /**
@@ -64,6 +69,7 @@ public class TaskList {
      */
     public void markTask(int index) throws RangaException {
         getTask(index).markAsDone();
+        storage.save(tasks);
     }
 
     /**
@@ -74,6 +80,7 @@ public class TaskList {
      */
     public void unmarkTask(int index) throws RangaException {
         getTask(index).markAsNotDone();
+        storage.save(tasks);
     }
 
     /**

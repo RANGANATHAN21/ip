@@ -6,6 +6,7 @@ import ranga.core.CommandProcessor;
 import ranga.core.TaskList;
 import ranga.exception.RangaException;
 import ranga.ui.UI;
+import ranga.core.Storage;
 
 /**
  * Ranga is a task management chatbot with a Vought™ theme.
@@ -22,7 +23,8 @@ public class Ranga {
      */
     public Ranga() {
         this.ui = new UI();
-        this.tasks = new TaskList();
+        Storage storage = new Storage();
+        this.tasks = new TaskList(storage);
     }
 
     public static void main(String[] args) {
