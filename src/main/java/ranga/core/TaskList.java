@@ -12,13 +12,14 @@ public class TaskList {
     private static final int MAX_TASKS = 100;
     private final Task[] tasks;
     private int taskCount;
+    private final Storage storage;
 
     /**
      * Creates a new empty TaskList.
      */
-    public TaskList() {
-        this.tasks = new Task[MAX_TASKS];
-        this.taskCount = 0;
+    public TaskList(Storage storage) {
+        this.tasks = storage.load();
+        this.storage = storage;
     }
 
     /**
@@ -34,6 +35,17 @@ public class TaskList {
 
         tasks[taskCount] = task;
         taskCount++;
+        tasks.add(task);
+        storage.save(tasks);
+    }
+
+    public Task deleteTask(int index) throws RangaException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new RangaException("Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
+        }
+        Task removed = tasks.remove(index);
+        storage.save(tasks);
+        return removed;
     }
 
     /**
@@ -57,8 +69,8 @@ public class TaskList {
      * @throws RangaException if index is out of bounds
      */
     public void markTask(int index) throws RangaException {
-        Task task = getTask(index);
-        task.markAsDone();
+        getTask(index).markAsDone();
+        storage.save(tasks);
     }
 
     /**
@@ -68,8 +80,8 @@ public class TaskList {
      * @throws RangaException if index is out of bounds
      */
     public void unmarkTask(int index) throws RangaException {
-        Task task = getTask(index);
-        task.markAsNotDone();
+        getTask(index).markAsNotDone();
+        storage.save(tasks);
     }
 
     /**
