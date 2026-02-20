@@ -1,6 +1,7 @@
 package ranga.ui;
 
 import ranga.task.Task;
+import java.util.ArrayList;
 
 /**
  * Handles all user interface interactions for the Ranga application.
@@ -98,19 +99,33 @@ public class UI {
     }
 
     /**
+     * Prints a message when a task is deleted.
+     *
+     * @param task The task that was deleted
+     * @param taskCount The total number of tasks after deletion
+     */
+    public void showTaskDeleted(Task task, int taskCount) {
+        System.out.println(SEPARATOR);
+        System.out.println(" Gotcha. I've eliminated this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(SEPARATOR);
+    }
+
+    /**
      * Prints the list of all tasks.
      *
-     * @param tasks The array of tasks
+     * @param tasks The ArrayList of tasks
      * @param taskCount The number of tasks in the list
      */
-    public void showTaskList(Task[] tasks, int taskCount) {
+    public void showTaskList(ArrayList<Task> tasks, int taskCount) {
         System.out.println(SEPARATOR);
         if (taskCount == 0) {
             System.out.println(" Nothing stored. Even The Deep has more going on.");
         } else {
             System.out.println(" We ain't runnin' a charity. Get to it.");
             for (int i = 0; i < taskCount; i++) {
-                System.out.println(" " + (i + 1) + "." + tasks[i]);
+                System.out.println(" " + (i + 1) + "." + tasks.get(i));
             }
         }
         System.out.println(SEPARATOR);

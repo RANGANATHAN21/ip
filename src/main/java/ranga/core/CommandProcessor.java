@@ -65,6 +65,15 @@ public class CommandProcessor {
             tasks.addTask(task);
             ui.showTaskAdded(task, tasks.getTaskCount());
 
+        } else if (userInput.startsWith("delete ")) {
+            int index = Parser.parseTaskIndex(
+                    userInput,
+                    Parser.getDeleteCommandOffset(),
+                    tasks.getTaskCount()
+            );
+            Task deleted = tasks.deleteTask(index);
+            ui.showTaskDeleted(deleted, tasks.getTaskCount());
+
         } else {
             throw new RangaException("Oi!! Get yourself together son!");
         }
