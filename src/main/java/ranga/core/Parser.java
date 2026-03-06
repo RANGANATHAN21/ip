@@ -6,6 +6,7 @@ import ranga.task.Deadline;
 import ranga.task.Event;
 import ranga.task.Task;
 import ranga.task.Todo;
+import java.time.format.DateTimeParseException;
 
 public class Parser {
 
@@ -84,7 +85,11 @@ public class Parser {
         if (by.isEmpty()) {
             throw new RangaException("Oi. Deadline. Try again.");
         }
-        return new Deadline(description, by);
+        try {
+            return new Deadline(description, by);
+        } catch (DateTimeParseException e) {
+            throw new RangaException("Invalid date format. Use: yyyy-MM-dd HHmm (e.g. 2019-12-02 1800)");
+        }
     }
 
     private static Task parseEvent(String userInput) throws RangaException {
@@ -106,7 +111,11 @@ public class Parser {
         if (to.isEmpty()) {
             throw new RangaException("When was the event ending again...");
         }
-        return new Event(description, from, to);
+        try {
+            return new Event(description, from, to);
+        } catch (DateTimeParseException e) {
+            throw new RangaException("Invalid date format. Use: yyyy-MM-dd HHmm (e.g. 2019-12-02 1800)");
+        }
     }
 
     private static int parseTaskIndex(String userInput, int offset) throws RangaException {
