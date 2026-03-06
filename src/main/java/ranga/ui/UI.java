@@ -77,8 +77,10 @@ public class UI {
      * @param task The task that was marked
      */
     public void showTaskMarked(Task task) {
+        System.out.println(SEPARATOR);
         System.out.println(" Nice! Homelander would be proud.");
         System.out.println("   " + task);
+        System.out.println(SEPARATOR);
     }
 
     /**
@@ -87,8 +89,10 @@ public class UI {
      * @param task The task that was unmarked
      */
     public void showTaskUnmarked(Task task) {
+        System.out.println(SEPARATOR);
         System.out.println(" One more mistake and you'll be sent to Ashley for performance review.");
         System.out.println("   " + task);
+        System.out.println(SEPARATOR);
     }
 
     /**
