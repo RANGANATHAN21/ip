@@ -37,6 +37,11 @@ public class UI {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Reads a command from the user.
+     *
+     * @return The trimmed input string entered by the user
+     */
     public String readCommand() {
         System.out.print("> ");
         return scanner.nextLine().trim();
@@ -128,6 +133,11 @@ public class UI {
         System.out.println(SEPARATOR);
     }
 
+    /**
+     * Prints the list of tasks matching a search keyword.
+     *
+     * @param tasks The list of matching tasks
+     */
     public void showMatchingTasks(ArrayList<Task> tasks) {
         System.out.println(SEPARATOR);
         if (tasks.isEmpty()) {

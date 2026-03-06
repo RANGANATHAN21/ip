@@ -10,11 +10,22 @@ public class Deadline extends Task {
 
     protected LocalDateTime by;
 
+    /**
+     * Creates a new Deadline task with the given description and due date/time.
+     *
+     * @param description The description of the task
+     * @param by The due date/time string in yyyy-MM-dd HHmm format
+     */
     public Deadline(String description, String by) {
         super(description);
         this.by = LocalDateTime.parse(by, INPUT_FORMAT);
     }
 
+    /**
+     * Returns the due date/time as a string in the input format yyyy-MM-dd HHmm.
+     *
+     * @return The due date/time string
+     */
     public String getBy() {
         return by.format(INPUT_FORMAT);
     }

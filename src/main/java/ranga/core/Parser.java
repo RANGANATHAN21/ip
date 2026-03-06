@@ -8,6 +8,10 @@ import ranga.task.Task;
 import ranga.task.Todo;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parses raw user input into executable Command objects.
+ * Also handles validation of input format and throws appropriate exceptions.
+ */
 public class Parser {
 
     private static final int TODO_COMMAND_OFFSET = 5;
@@ -23,11 +27,11 @@ public class Parser {
 
 
     /**
-     * Parses user input and returns the appropriate Command object.
+     * Parses a user input string and returns the corresponding Command.
      *
-     * @param userInput The full user input string
-     * @return The corresponding Command object
-     * @throws RangaException if input is invalid
+     * @param userInput The raw input string from the user
+     * @return The Command corresponding to the user input
+     * @throws RangaException if the input format is invalid
      */
     public static Command parse(String userInput) throws RangaException {
         if (userInput.equals("bye")) {
