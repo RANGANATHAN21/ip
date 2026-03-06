@@ -7,12 +7,19 @@ import ranga.core.TaskList;
 import ranga.exception.RangaException;
 import ranga.ui.UI;
 
+/**
+ * Main class for the Ranga chatbot application.
+ * Initializes components and runs the main interaction loop.
+ */
 public class Ranga {
 
     private final UI ui;
     private final TaskList tasks;
     private final Storage storage;
 
+    /**
+     * Creates a new Ranga instance, initializing UI, storage, and task list.
+     */
     public Ranga() {
         ui = new UI();
         storage = new Storage();
@@ -23,6 +30,9 @@ public class Ranga {
         new Ranga().run();
     }
 
+    /**
+     * Runs the main loop, reading and executing commands until exit.
+     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;

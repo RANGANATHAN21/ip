@@ -6,6 +6,11 @@ package ranga.exception;
  */
 public class RangaException extends Exception {
 
+    /**
+     * Creates a new RangaException with the given message.
+     *
+     * @param message The error message
+     */
     public RangaException(String message) {
         super(message);
     }

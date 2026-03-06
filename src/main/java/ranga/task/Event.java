@@ -11,16 +11,33 @@ public class Event extends Task {
     protected LocalDateTime from;
     protected LocalDateTime to;
 
+    /**
+     * Creates a new Event task with the given description, start, and end date/time.
+     *
+     * @param description The description of the task
+     * @param from The start date/time string in yyyy-MM-dd HHmm format
+     * @param to The end date/time string in yyyy-MM-dd HHmm format
+     */
     public Event(String description, String from, String to) {
         super(description);
         this.from = LocalDateTime.parse(from, INPUT_FORMAT);
         this.to = LocalDateTime.parse(to, INPUT_FORMAT);
     }
 
+    /**
+     * Returns the start date/time as a string in the input format yyyy-MM-dd HHmm.
+     *
+     * @return The start date/time string
+     */
     public String getFrom() {
         return from.format(INPUT_FORMAT);
     }
 
+    /**
+     * Returns the end date/time as a string in the input format yyyy-MM-dd HHmm.
+     *
+     * @return The end date/time string
+     */
     public String getTo() {
         return to.format(INPUT_FORMAT);
     }
