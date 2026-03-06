@@ -1,8 +1,9 @@
 package ranga.core;
 
+import java.util.ArrayList;
+
 import ranga.exception.RangaException;
 import ranga.task.Task;
-import java.util.ArrayList;
 
 /**
  * Manages the list of tasks for the Ranga application.
@@ -14,7 +15,7 @@ public class TaskList {
     private final Storage storage;
 
     /**
-     * Creates a new empty TaskList.
+     * Creates a new TaskList, loading existing tasks from storage.
      */
     public TaskList(Storage storage) {
         this.tasks = storage.load();
@@ -40,7 +41,8 @@ public class TaskList {
      */
     public Task getTask(int index) throws RangaException {
         if (index < 0 || index >= tasks.size()) {
-            throw new RangaException("Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
+            throw new RangaException("Tek Knight couldn't find that task. "
+                    + "Keep trolling and we'll wire $1M from your account to BLM.");
         }
         return tasks.get(index);
     }
@@ -53,9 +55,7 @@ public class TaskList {
      * @throws RangaException if index is out of bounds
      */
     public Task deleteTask(int index) throws RangaException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new RangaException("Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
-        }
+        getTask(index); // validates bounds
         Task removed = tasks.remove(index);
         storage.save(tasks);
         return removed;
@@ -75,7 +75,7 @@ public class TaskList {
     /**
      * Marks a task as not done.
      *
-     * @param index The index of the task to unmark (0-based)
+     * @param index The index of the task to unmark
      * @throws RangaException if index is out of bounds
      */
     public void unmarkTask(int index) throws RangaException {
@@ -101,6 +101,12 @@ public class TaskList {
         return tasks;
     }
 
+    /**
+     * Finds all tasks whose descriptions contain the given keyword (case-insensitive).
+     *
+     * @param keyword The keyword to search for
+     * @return ArrayList of matching tasks
+     */
     public ArrayList<Task> findTasks(String keyword) {
         ArrayList<Task> matching = new ArrayList<>();
         for (Task task : tasks) {

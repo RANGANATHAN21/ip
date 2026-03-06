@@ -4,7 +4,7 @@
 
 Ranga is a fast, no-nonsense command-line chatbot that helps you track your tasks. Type a command, get things done.
 
-Ranga CLI![img.png](img.png)
+![Ranga CLI](img.png)
 ---
 
 ## Quick Start

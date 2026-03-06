@@ -23,6 +23,8 @@ public class MarkCommand extends Command {
 
     /**
      * Marks the task at the stored index as done and displays a confirmation message.
+     *
+     * @throws RangaException if the index is out of bounds
      */
     @Override
     public void execute(TaskList tasks, UI ui, Storage storage) throws RangaException {

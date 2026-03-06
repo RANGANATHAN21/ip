@@ -24,6 +24,8 @@ public class DeleteCommand extends Command {
 
     /**
      * Deletes the task at the stored index and displays a confirmation message.
+     *
+     * @throws RangaException if the index is out of bounds
      */
     @Override
     public void execute(TaskList tasks, UI ui, Storage storage) throws RangaException {

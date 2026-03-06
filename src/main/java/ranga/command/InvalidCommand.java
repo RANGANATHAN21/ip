@@ -6,13 +6,13 @@ import ranga.exception.RangaException;
 import ranga.ui.UI;
 
 /**
- * Command that represents an unrecognised user input.
+ * Command that represents an unrecognized user input.
  * Always throws a RangaException when executed.
  */
 public class InvalidCommand extends Command {
 
     /**
-     * Throws a RangaException to indicate the command was not recognised.
+     * Throws a RangaException to indicate the command was not recognized.
      *
      * @throws RangaException always
      */

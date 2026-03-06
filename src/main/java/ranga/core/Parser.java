@@ -1,12 +1,21 @@
 package ranga.core;
 
-import ranga.command.*;
+import java.time.format.DateTimeParseException;
+
+import ranga.command.AddCommand;
+import ranga.command.Command;
+import ranga.command.DeleteCommand;
+import ranga.command.ExitCommand;
+import ranga.command.FindCommand;
+import ranga.command.InvalidCommand;
+import ranga.command.ListCommand;
+import ranga.command.MarkCommand;
+import ranga.command.UnmarkCommand;
 import ranga.exception.RangaException;
 import ranga.task.Deadline;
 import ranga.task.Event;
 import ranga.task.Task;
 import ranga.task.Todo;
-import java.time.format.DateTimeParseException;
 
 /**
  * Parses raw user input into executable Command objects.
@@ -14,17 +23,17 @@ import java.time.format.DateTimeParseException;
  */
 public class Parser {
 
-    private static final int TODO_COMMAND_OFFSET = 5;
-    private static final int DEADLINE_COMMAND_OFFSET = 9;
-    private static final int EVENT_COMMAND_OFFSET = 6;
-    private static final int DELETE_COMMAND_OFFSET = 7;
-    private static final int MARK_COMMAND_OFFSET = 5;
-    private static final int UNMARK_COMMAND_OFFSET = 7;
+    private static final int TODO_OFFSET = 5;
+    private static final int DEADLINE_OFFSET = 9;
+    private static final int EVENT_OFFSET = 6;
+    private static final int MARK_OFFSET = 5;
+    private static final int UNMARK_OFFSET = 7;
+    private static final int DELETE_OFFSET = 7;
+    private static final int FIND_OFFSET = 5;
+
     private static final int BY_TAG_LENGTH = 3;
     private static final int FROM_TAG_LENGTH = 5;
     private static final int TO_TAG_LENGTH = 3;
-    private static final int FIND_COMMAND_OFFSET = 5;
-
 
     /**
      * Parses a user input string and returns the corresponding Command.
@@ -36,47 +45,29 @@ public class Parser {
     public static Command parse(String userInput) throws RangaException {
         if (userInput.equals("bye")) {
             return new ExitCommand();
-
         } else if (userInput.equals("list")) {
             return new ListCommand();
-
         } else if (userInput.startsWith("mark ")) {
-            int index = parseTaskIndex(userInput, MARK_COMMAND_OFFSET);
-            return new MarkCommand(index);
-
+            return new MarkCommand(parseIndex(userInput, MARK_OFFSET));
         } else if (userInput.startsWith("unmark ")) {
-            int index = parseTaskIndex(userInput, UNMARK_COMMAND_OFFSET);
-            return new UnmarkCommand(index);
-
-        } else if (userInput.startsWith("todo ")) {
-            Task task = parseTodo(userInput);
-            return new AddCommand(task);
-
-        } else if (userInput.startsWith("deadline ")) {
-            Task task = parseDeadline(userInput);
-            return new AddCommand(task);
-
-        } else if (userInput.startsWith("event ")) {
-            Task task = parseEvent(userInput);
-            return new AddCommand(task);
-
+            return new UnmarkCommand(parseIndex(userInput, UNMARK_OFFSET));
         } else if (userInput.startsWith("delete ")) {
-            int index = parseTaskIndex(userInput, DELETE_COMMAND_OFFSET);
-            return new DeleteCommand(index);
-
+            return new DeleteCommand(parseIndex(userInput, DELETE_OFFSET));
+        } else if (userInput.startsWith("todo ")) {
+            return new AddCommand(parseTodo(userInput));
+        } else if (userInput.startsWith("deadline ")) {
+            return new AddCommand(parseDeadline(userInput));
+        } else if (userInput.startsWith("event ")) {
+            return new AddCommand(parseEvent(userInput));
         } else if (userInput.startsWith("find ")) {
-            String keyword = userInput.substring(FIND_COMMAND_OFFSET).trim();
-            if (keyword.isEmpty()) {
-                throw new RangaException("Find what exactly? Give me a keyword.");
-            }
-            return new FindCommand(keyword);
+            return parseFindCommand(userInput);
         } else {
             return new InvalidCommand();
         }
     }
 
     private static Task parseTodo(String userInput) throws RangaException {
-        String description = userInput.substring(TODO_COMMAND_OFFSET).trim();
+        String description = userInput.substring(TODO_OFFSET).trim();
         if (description.isEmpty()) {
             throw new RangaException("Blank tasks are how people explode.");
         }
@@ -84,10 +75,11 @@ public class Parser {
     }
 
     private static Task parseDeadline(String userInput) throws RangaException {
-        String details = userInput.substring(DEADLINE_COMMAND_OFFSET).trim();
+        String details = userInput.substring(DEADLINE_OFFSET).trim();
         int byIndex = details.indexOf("/by");
         if (byIndex == -1) {
-            throw new RangaException("Strictly adhere to Vought guidelines: deadline DESCRIPTION /by DEADLINE");
+            throw new RangaException(
+                    "Strictly adhere to Vought guidelines: deadline DESCRIPTION /by yyyy-MM-dd HHmm");
         }
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + BY_TAG_LENGTH).trim();
@@ -100,16 +92,18 @@ public class Parser {
         try {
             return new Deadline(description, by);
         } catch (DateTimeParseException e) {
-            throw new RangaException("Invalid date format. Use: yyyy-MM-dd HHmm (e.g. 2019-12-02 1800)");
+            throw new RangaException(
+                    "Strictly adhere to Vought guidelines:: yyyy-MM-dd HHmm (eg. 2019-12-02 1800)");
         }
     }
 
     private static Task parseEvent(String userInput) throws RangaException {
-        String details = userInput.substring(EVENT_COMMAND_OFFSET).trim();
+        String details = userInput.substring(EVENT_OFFSET).trim();
         int fromIndex = details.indexOf("/from");
         int toIndex = details.indexOf("/to");
         if (fromIndex == -1 || toIndex == -1) {
-            throw new RangaException("Strictly adhere to Vought guidelines: event DESCRIPTION /from START /to END");
+            throw new RangaException("Strictly adhere to Vought guidelines: "
+                    + "event DESCRIPTION /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
         }
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + FROM_TAG_LENGTH, toIndex).trim();
@@ -126,23 +120,32 @@ public class Parser {
         try {
             return new Event(description, from, to);
         } catch (DateTimeParseException e) {
-            throw new RangaException("Invalid date format. Use: yyyy-MM-dd HHmm (e.g. 2019-12-02 1800)");
+            throw new RangaException(
+                    "Strictly adhere to Vought guidelines: yyyy-MM-dd HHmm (eg. 2019-12-02 1800)");
         }
     }
 
-    private static int parseTaskIndex(String userInput, int offset) throws RangaException {
+    private static Command parseFindCommand(String userInput) throws RangaException {
+        String keyword = userInput.substring(FIND_OFFSET).trim();
+        if (keyword.isEmpty()) {
+            throw new RangaException("Give me something to work with son.");
+        }
+        return new FindCommand(keyword);
+    }
+
+    private static int parseIndex(String userInput, int offset) throws RangaException {
         String indexString = userInput.substring(offset).trim();
         if (indexString.isEmpty()) {
-            throw new RangaException("Tek Knight couldn't find that task. Keep trolling and we'll wire $1M from your account to BLM.");
+            throw new RangaException("No task number given. Try again.");
         }
         int index;
         try {
             index = Integer.parseInt(indexString) - 1;
         } catch (NumberFormatException e) {
-            throw new RangaException("Black Noir doesn't have time to teach numbers. Last chance.");
+            throw new RangaException("That's not a number. Try again.");
         }
         if (index < 0) {
-            throw new RangaException("Negative tasks? Really?");
+            throw new RangaException("Task number must be positive.");
         }
         return index;
     }

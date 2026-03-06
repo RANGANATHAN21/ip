@@ -3,18 +3,23 @@ package ranga.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a task that needs to be done before a specific date/time.
+ */
 public class Deadline extends Task {
 
-    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-    private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
+    private static final DateTimeFormatter INPUT_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+    private static final DateTimeFormatter OUTPUT_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
-    protected LocalDateTime by;
+    private final LocalDateTime by;
 
     /**
      * Creates a new Deadline task with the given description and due date/time.
      *
      * @param description The description of the task
-     * @param by The due date/time string in yyyy-MM-dd HHmm format
+     * @param by          The due date/time string in yyyy-MM-dd HHmm format
      */
     public Deadline(String description, String by) {
         super(description);

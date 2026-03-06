@@ -26,6 +26,11 @@ public class Ranga {
         tasks = new TaskList(storage);
     }
 
+    /**
+     * Entry point for the Ranga application.
+     *
+     * @param args Command-line arguments (not used)
+     */
     public static void main(String[] args) {
         new Ranga().run();
     }
@@ -35,13 +40,13 @@ public class Ranga {
      */
     public void run() {
         ui.showWelcome();
-        boolean isExit = false;
-        while (!isExit) {
+        boolean isFinished = false;
+        while (!isFinished) {
             try {
                 String fullCommand = ui.readCommand();
                 Command c = Parser.parse(fullCommand);
                 c.execute(tasks, ui, storage);
-                isExit = c.isExit();
+                isFinished = c.isExit();
             } catch (RangaException e) {
                 ui.showError(e.getMessage());
             }

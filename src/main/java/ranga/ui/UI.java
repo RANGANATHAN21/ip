@@ -1,8 +1,9 @@
 package ranga.ui;
 
-import ranga.task.Task;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import ranga.task.Task;
 
 /**
  * Handles all user interface interactions for the Ranga application.
@@ -10,31 +11,16 @@ import java.util.Scanner;
  */
 public class UI {
 
-    private static final String SEPARATOR = "____________________________________________________________";
+    private static final String SEPARATOR =
+            "____________________________________________________________";
+
     private final Scanner scanner;
 
     /**
-     * Prints the welcome greeting and ASCII logo.
+     * Creates a new UI instance.
      */
-    public void showWelcome() {
-        String logo =
-                """
-                         ____
-                        |  _ \\  __ _ _ __   __ _  __ _
-                        | |_) / _` | '_ \\ / _` |/ _` |
-                        |  _ < (_| | | | | (_| | (_| |
-                        |_| \\_\\__,_|_| |_|\\__, |\\__,_|
-                                           |___/
-                        """;
-
-        System.out.println(" Welcome to Vought™ Interactive Systems");
-        System.out.println(" I'm Ranga, your favourite VoughtBot! Definitely not a supe. Trust me.");
-        System.out.println(logo);
-        System.out.println(" We record everything you say for quality assurance purposes. Type 'list' to see the stored Herogasm Files, or 'bye' to go off-grid.");
-    }
-
     public UI() {
-        this.scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
     }
 
     /**
@@ -48,11 +34,30 @@ public class UI {
     }
 
     /**
+     * Prints the welcome greeting and ASCII logo.
+     */
+    public void showWelcome() {
+        String logo = """
+                 ____
+                |  _ \\  __ _ _ __   __ _  __ _
+                | |_) / _` | '_ \\ / _` |/ _` |
+                |  _ < (_| | | | | (_| | (_| |
+                |_| \\_\\__,_|_| |_|\\__, |\\__,_|
+                                   |___/
+                """;
+        System.out.println(" Welcome to Vought™ Interactive Systems");
+        System.out.println(" I'm Ranga, your favourite VoughtBot! Definitely not a supe. Trust me.");
+        System.out.println(logo);
+        System.out.println(" We record everything you say for quality assurance purposes."
+                + " Type 'list' to see the stored Herogasm Files, or 'bye' to go off-grid.");
+    }
+
+    /**
      * Prints the goodbye message.
      */
     public void showGoodbye() {
-        System.out.println(
-                " Thank you for your commitment to keeping supes safe. Try not to cause an international incident!");
+        System.out.println(" Thank you for your commitment to keeping supes safe."
+                + " Try not to cause an international incident!");
     }
 
     /**
@@ -89,35 +94,37 @@ public class UI {
     /**
      * Prints a message when a task is added.
      *
-     * @param task The task that was added
+     * @param task      The task that was added
      * @param taskCount The total number of tasks after addition
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(SEPARATOR);
         System.out.println(" Right then. Added to the hit list:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + taskCount + " tasks in the list. Have fun!");
+        System.out.println(
+                " Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks") + " in the list. Have fun!");
         System.out.println(SEPARATOR);
     }
 
     /**
      * Prints a message when a task is deleted.
      *
-     * @param task The task that was deleted
+     * @param task      The task that was deleted
      * @param taskCount The total number of tasks after deletion
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(SEPARATOR);
         System.out.println(" Gotcha. I've eliminated this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(
+                " Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks") + " in the list. Have fun!");
         System.out.println(SEPARATOR);
     }
 
     /**
      * Prints the list of all tasks.
      *
-     * @param tasks The ArrayList of tasks
+     * @param tasks     The ArrayList of tasks
      * @param taskCount The number of tasks in the list
      */
     public void showTaskList(ArrayList<Task> tasks, int taskCount) {

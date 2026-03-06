@@ -20,18 +20,34 @@ public class Task {
         this.isDone = false;
     }
 
+    /**
+     * Marks the task as done.
+     */
     public void markAsDone() {
         isDone = true;
     }
 
+    /**
+     * Marks the task as not done.
+     */
     public void markAsNotDone() {
         isDone = false;
     }
 
+    /**
+     * Returns the status icon representing completion state.
+     *
+     * @return "X" if done, " " otherwise
+     */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
     }
 
+    /**
+     * Returns the description of the task.
+     *
+     * @return The task description
+     */
     public String getDescription() {
         return description;
     }

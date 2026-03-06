@@ -1,16 +1,16 @@
 package ranga.core;
 
-import ranga.task.Task;
-import ranga.task.Todo;
-import ranga.task.Deadline;
-import ranga.task.Event;
-import ranga.exception.RangaException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import ranga.exception.RangaException;
+import ranga.task.Deadline;
+import ranga.task.Event;
+import ranga.task.Task;
+import ranga.task.Todo;
 
 /**
  * Handles loading and saving tasks to/from the hard disk.
@@ -20,9 +20,8 @@ public class Storage {
     private static final String FILE_PATH = "./data/ranga.txt";
 
     /**
-     * Loads tasks from the data file.
+     * Loads tasks from the data file, skipping corrupted lines with a warning.
      * Returns an empty list if the file doesn't exist.
-     * Skips corrupted lines with a warning.
      *
      * @return ArrayList of tasks loaded from disk
      */
@@ -56,18 +55,17 @@ public class Storage {
     }
 
     /**
-     * Saves all tasks to the data file.
-     * Creates the data directory if it doesn't exist.
+     * Saves all tasks to the data file, creating the data directory if it doesn't exist.
      *
      * @param tasks The list of tasks to save
      */
     public void save(ArrayList<Task> tasks) {
         File file = new File(FILE_PATH);
-        if (!file.getParentFile().mkdirs() && !file.getParentFile().exists()) {
+        File parentDir = file.getParentFile();
+        if (!parentDir.mkdirs() && !parentDir.exists()) {
             System.out.println(" [Warning] Could not create data directory.");
             return;
         }
-
         try (FileWriter writer = new FileWriter(file)) {
             for (Task task : tasks) {
                 writer.write(serialise(task) + System.lineSeparator());
@@ -78,7 +76,11 @@ public class Storage {
     }
 
     /**
-     * Converts a Task to its file format string.
+     * Converts a Task to its saved file format string.
+     *
+     * @param task The task to serialize
+     * @return The formatted string representing the task
+     * @throws IllegalArgumentException if the task type is unrecognized
      */
     private String serialise(Task task) throws IllegalArgumentException {
         String done = task.getStatusIcon().equals("X") ? "1" : "0";
@@ -95,50 +97,55 @@ public class Storage {
     /**
      * Parses a line from the data file into a Task.
      *
+     * @param line The raw line from the data file
+     * @return The parsed Task
      * @throws RangaException if the line format is invalid
      */
     private Task parseTask(String line) throws RangaException {
         String[] parts = line.split(" \\| ");
-
         if (parts.length < 3) {
             throw new RangaException("Too few fields.");
         }
-
         String type = parts[0].trim();
         String doneFlag = parts[1].trim();
         String description = parts[2].trim();
-
         if (!doneFlag.equals("0") && !doneFlag.equals("1")) {
             throw new RangaException("Invalid done flag.");
         }
-
         boolean isDone = doneFlag.equals("1");
         Task task = createTask(type, description, parts);
-
         if (isDone) {
             task.markAsDone();
         }
-
         return task;
     }
 
+    /**
+     * Creates a Task from its type identifier, description, and raw data fields.
+     *
+     * @param type        The task type identifier ("T", "D", or "E")
+     * @param description The task description
+     * @param parts       The full array of split fields from the data file line
+     * @return The constructed Task object
+     * @throws RangaException if the type is unrecognized or field count is wrong
+     */
     private Task createTask(String type, String description, String[] parts) throws RangaException {
         switch (type) {
         case "T" -> {
             if (parts.length != 3) {
-                throw new RangaException("Todo should have exactly 3 fields.");
+                throw new RangaException("Todo should have exactly 3 fields...");
             }
             return new Todo(description);
         }
         case "D" -> {
             if (parts.length != 4) {
-                throw new RangaException("Deadline should have exactly 4 fields.");
+                throw new RangaException("Deadline should have exactly 4 fields...");
             }
             return new Deadline(description, parts[3].trim());
         }
         case "E" -> {
             if (parts.length != 5) {
-                throw new RangaException("Event should have exactly 5 fields.");
+                throw new RangaException("Event should have exactly 5 fields...");
             }
             return new Event(description, parts[3].trim(), parts[4].trim());
         }

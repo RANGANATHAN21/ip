@@ -14,8 +14,8 @@ public abstract class Command {
     /**
      * Executes the command with the given task list, UI, and storage.
      *
-     * @param tasks The task list to operate on
-     * @param ui The UI to display output
+     * @param tasks   The task list to operate on
+     * @param ui      The UI to display output
      * @param storage The storage to persist changes
      * @throws RangaException if there is an error executing the command
      */
