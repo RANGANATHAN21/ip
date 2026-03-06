@@ -63,7 +63,10 @@ public class Storage {
      */
     public void save(ArrayList<Task> tasks) {
         File file = new File(FILE_PATH);
-        file.getParentFile().mkdirs(); // creates ./data/ if it doesn't exist
+        if (!file.getParentFile().mkdirs() && !file.getParentFile().exists()) {
+            System.out.println(" [Warning] Could not create data directory.");
+            return;
+        }
 
         try (FileWriter writer = new FileWriter(file)) {
             for (Task task : tasks) {
@@ -110,35 +113,36 @@ public class Storage {
         }
 
         boolean isDone = doneFlag.equals("1");
-        Task task;
-
-        switch (type) {
-        case "T":
-            if (parts.length != 3) {
-                throw new RangaException("Todo should have exactly 3 fields.");
-            }
-            task = new Todo(description);
-            break;
-        case "D":
-            if (parts.length != 4) {
-                throw new RangaException("Deadline should have exactly 4 fields.");
-            }
-            task = new Deadline(description, parts[3].trim());
-            break;
-        case "E":
-            if (parts.length != 5) {
-                throw new RangaException("Event should have exactly 5 fields.");
-            }
-            task = new Event(description, parts[3].trim(), parts[4].trim());
-            break;
-        default:
-            throw new RangaException("Unknown task type: " + type);
-        }
+        Task task = createTask(type, description, parts);
 
         if (isDone) {
             task.markAsDone();
         }
 
         return task;
+    }
+
+    private Task createTask(String type, String description, String[] parts) throws RangaException {
+        switch (type) {
+        case "T" -> {
+            if (parts.length != 3) {
+                throw new RangaException("Todo should have exactly 3 fields.");
+            }
+            return new Todo(description);
+        }
+        case "D" -> {
+            if (parts.length != 4) {
+                throw new RangaException("Deadline should have exactly 4 fields.");
+            }
+            return new Deadline(description, parts[3].trim());
+        }
+        case "E" -> {
+            if (parts.length != 5) {
+                throw new RangaException("Event should have exactly 5 fields.");
+            }
+            return new Event(description, parts[3].trim(), parts[4].trim());
+        }
+        default -> throw new RangaException("Unknown task type: " + type);
+        }
     }
 }

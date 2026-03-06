@@ -2,6 +2,7 @@ package ranga.ui;
 
 import ranga.task.Task;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Handles all user interface interactions for the Ranga application.
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class UI {
 
     private static final String SEPARATOR = "____________________________________________________________";
+    private final Scanner scanner;
 
     /**
      * Prints the welcome greeting and ASCII logo.
@@ -31,19 +33,21 @@ public class UI {
         System.out.println(" We record everything you say for quality assurance purposes. Type 'list' to see the stored Herogasm Files, or 'bye' to go off-grid.");
     }
 
+    public UI() {
+        this.scanner = new Scanner(System.in);
+    }
+
+    public String readCommand() {
+        System.out.print("> ");
+        return scanner.nextLine().trim();
+    }
+
     /**
      * Prints the goodbye message.
      */
     public void showGoodbye() {
         System.out.println(
                 " Thank you for your commitment to keeping supes safe. Try not to cause an international incident!");
-    }
-
-    /**
-     * Prints a separator line.
-     */
-    public void showLine() {
-        System.out.println(SEPARATOR);
     }
 
     /**
@@ -55,13 +59,6 @@ public class UI {
         System.out.println(SEPARATOR);
         System.out.println(" " + errorMessage);
         System.out.println(SEPARATOR);
-    }
-
-    /**
-     * Prints a message when user enters empty input.
-     */
-    public void showEmptyInputMessage() {
-        System.out.println(" Say something or I'll ping Homelander.");
     }
 
     /**
