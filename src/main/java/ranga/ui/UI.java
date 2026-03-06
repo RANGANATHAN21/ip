@@ -127,4 +127,17 @@ public class UI {
         }
         System.out.println(SEPARATOR);
     }
+
+    public void showMatchingTasks(ArrayList<Task> tasks) {
+        System.out.println(SEPARATOR);
+        if (tasks.isEmpty()) {
+            System.out.println(" No matching tasks found. Even Frenchie couldn't track those down.");
+        } else {
+            System.out.println(" Here are the matching tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            }
+        }
+        System.out.println(SEPARATOR);
+    }
 }

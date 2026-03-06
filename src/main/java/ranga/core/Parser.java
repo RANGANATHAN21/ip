@@ -19,6 +19,8 @@ public class Parser {
     private static final int BY_TAG_LENGTH = 3;
     private static final int FROM_TAG_LENGTH = 5;
     private static final int TO_TAG_LENGTH = 3;
+    private static final int FIND_COMMAND_OFFSET = 5;
+
 
     /**
      * Parses user input and returns the appropriate Command object.
@@ -58,6 +60,12 @@ public class Parser {
             int index = parseTaskIndex(userInput, DELETE_COMMAND_OFFSET);
             return new DeleteCommand(index);
 
+        } else if (userInput.startsWith("find ")) {
+            String keyword = userInput.substring(FIND_COMMAND_OFFSET).trim();
+            if (keyword.isEmpty()) {
+                throw new RangaException("Find what exactly? Give me a keyword.");
+            }
+            return new FindCommand(keyword);
         } else {
             return new InvalidCommand();
         }
